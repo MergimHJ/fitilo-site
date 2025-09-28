@@ -1192,14 +1192,14 @@
             </ul>
           </div>
 
-          <div class="footer-section">
+         <div class="footer-section">
             <h3>Support</h3>
             <ul>
               <li><a href="#contact">Contact</a></li>
-              <li><a href="#" onclick="openModal('faq')">FAQ</a></li>
+              <li><a href="javascript:void(0)" onclick="openModal('faq')">FAQ</a></li>
               <li><a href="#testimonials">Témoignages</a></li>
               <li>
-                <a href="#" onclick="openModal('remboursement')"
+                <a href="javascript:void(0)" onclick="openModal('remboursement')"
                   >Remboursement</a
                 >
               </li>
@@ -1210,17 +1210,17 @@
             <h3>Informations légales</h3>
             <ul>
               <li>
-                <a href="#" onclick="openModal('mentions')">Mentions légales</a>
+                <a href="javascript:void(0)" onclick="openModal('mentions')">Mentions légales</a>
               </li>
               <li>
-                <a href="#" onclick="openModal('cgv')">Conditions générales</a>
+                <a href="javascript:void(0)" onclick="openModal('cgv')">Conditions générales</a>
               </li>
               <li>
-                <a href="#" onclick="openModal('confidentialite')"
+                <a href="javascript:void(0)" onclick="openModal('confidentialite')"
                   >Confidentialité</a
                 >
               </li>
-              <li><a href="#" onclick="openModal('cookies')">Cookies</a></li>
+              <li><a href="javascript:void(0)" onclick="openModal('cookies')">Cookies</a></li>
             </ul>
           </div>
         </div>
@@ -1626,143 +1626,257 @@
     <script src="https://js.stripe.com/v3/"></script>
 
     <script>
-      // Configuration Stripe - REMPLACEZ par votre clé publique
-      const stripe = Stripe('pk_test_51SBJpBRpUZaKe83RyEVbgWecoZpJHJTCrAfPQNooJRRQlIfBv1fzkZTPqN2PWB6NBOvyLMN0PW8uITFzRWGap9ph00QHE2A1Ro');
-      
-      // Fonction pour acheter un programme
-      async function buyProgram(button) {
-        const price = button.getAttribute('data-price');
-        const program = button.getAttribute('data-program');
-        
-        // Désactiver le bouton pendant le traitement
-        button.disabled = true;
-        button.textContent = 'Traitement...';
-        
-        try {
-          // Appel au serveur pour créer la session de paiement
-          const response = await fetch('/create-checkout-session', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              price: parseInt(price),
-              programName: program
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error('Erreur réseau');
-          }
-          
-          const session = await response.json();
-          
-          // Rediriger vers Stripe Checkout
-          const result = await stripe.redirectToCheckout({
-            sessionId: session.id
-          });
-          
-          if (result.error) {
-            console.error('Erreur Stripe:', result.error);
-            alert('Erreur lors du paiement: ' + result.error.message);
-          }
-          
-        } catch (error) {
-          console.error('Erreur:', error);
-          alert('Une erreur est survenue. Veuillez réessayer ou contactez le support.');
-        } finally {
-          // Réactiver le bouton
-          button.disabled = false;
-          button.textContent = 'Acheter maintenant';
-        }
-      }
+      // Configuration Stripe sécurisée - RÉCUPÉRÉE DU SERVEUR
+let stripe;
+let stripeConfig;
 
-      // Menu burger functionality
-      const burgerMenu = document.getElementById("burgerMenu");
-      const mobileNav = document.getElementById("mobileNav");
-      let isMenuOpen = false;
+// Initialisation sécurisée au chargement de la page
+document.addEventListener('DOMContentLoaded', async function() {
+  try {
+    // Récupération sécurisée de la configuration
+    const response = await fetch('/config');
+    if (!response.ok) {
+      throw new Error('Impossible de charger la configuration');
+    }
+    
+    stripeConfig = await response.json();
+    stripe = Stripe(stripeConfig.publicKey);
+    
+    console.log('✅ Stripe initialisé avec succès');
+  } catch (error) {
+    console.error('❌ Erreur initialisation Stripe:', error);
+    showError('Erreur de configuration. Veuillez rafraîchir la page.');
+  }
+});
 
-      burgerMenu.addEventListener("click", function () {
-        isMenuOpen = !isMenuOpen;
+// Fonction d'achat SÉCURISÉE
+async function buyProgram(button) {
+  // Vérification de l'initialisation
+  if (!stripe) {
+    showError('Configuration en cours, veuillez patienter...');
+    return;
+  }
+  
+  const price = parseInt(button.getAttribute('data-price'));
+  const program = button.getAttribute('data-program');
+  
+  // Validation côté client
+  if (!price || !program) {
+    showError('Données de programme invalides');
+    return;
+  }
+  
+  const validPrices = [29, 39, 59];
+  if (!validPrices.includes(price)) {
+    showError('Prix invalide');
+    return;
+  }
+  
+  // UI : Désactivation du bouton
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Traitement en cours...';
+  button.style.opacity = '0.6';
+  
+  try {
+    // Appel sécurisé au serveur
+    const response = await fetch('/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        price: price,
+        programName: program
+      })
+    });
+    
+    // Gestion des erreurs HTTP
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Erreur HTTP ${response.status}`);
+    }
+    
+    const session = await response.json();
+    
+    if (!session.id) {
+      throw new Error('Session invalide reçue du serveur');
+    }
+    
+    // Redirection sécurisée vers Stripe
+    const result = await stripe.redirectToCheckout({
+      sessionId: session.id
+    });
+    
+    if (result.error) {
+      throw new Error(result.error.message);
+    }
+    
+  } catch (error) {
+    console.error('❌ Erreur achat:', error);
+    
+    // Messages d'erreur user-friendly
+    let userMessage;
+    if (error.message.includes('network') || error.message.includes('fetch')) {
+      userMessage = 'Problème de connexion. Vérifiez votre internet et réessayez.';
+    } else if (error.message.includes('invalid')) {
+      userMessage = 'Données invalides. Rafraîchissez la page et réessayez.';
+    } else {
+      userMessage = 'Une erreur est survenue. Contactez le support si le problème persiste.';
+    }
+    
+    showError(userMessage);
+    
+  } finally {
+    // Restauration du bouton
+    setTimeout(() => {
+      button.disabled = false;
+      button.textContent = originalText;
+      button.style.opacity = '1';
+    }, 1000);
+  }
+}
 
-        if (isMenuOpen) {
-          burgerMenu.classList.add("active");
-          mobileNav.classList.add("active");
-          document.body.style.overflow = "hidden";
-        } else {
-          burgerMenu.classList.remove("active");
-          mobileNav.classList.remove("active");
-          document.body.style.overflow = "auto";
-        }
+// Fonction d'affichage d'erreurs sécurisée
+function showError(message) {
+  // Suppression des anciennes erreurs
+  const existingError = document.querySelector('.error-notification');
+  if (existingError) {
+    existingError.remove();
+  }
+  
+  // Création de la notification d'erreur
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'error-notification';
+  errorDiv.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #ff4444;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 10000;
+    max-width: 300px;
+    font-size: 14px;
+    font-weight: 500;
+  `;
+  
+  // Échappement XSS
+  errorDiv.textContent = message;
+  
+  document.body.appendChild(errorDiv);
+  
+  // Suppression automatique
+  setTimeout(() => {
+    if (errorDiv.parentNode) {
+      errorDiv.remove();
+    }
+  }, 5000);
+}
+
+// Protection contre les attaques de clickjacking
+if (window.top !== window.self) {
+  window.top.location = window.self.location;
+}
+
+// Menu burger functionality
+const burgerMenu = document.getElementById("burgerMenu");
+const mobileNav = document.getElementById("mobileNav");
+let isMenuOpen = false;
+
+if (burgerMenu && mobileNav) {
+  burgerMenu.addEventListener("click", function () {
+    isMenuOpen = !isMenuOpen;
+
+    if (isMenuOpen) {
+      burgerMenu.classList.add("active");
+      mobileNav.classList.add("active");
+      document.body.style.overflow = "hidden";
+    } else {
+      burgerMenu.classList.remove("active");
+      mobileNav.classList.remove("active");
+      document.body.style.overflow = "auto";
+    }
+  });
+
+  // Function to close mobile navigation
+  window.closeMobileNav = function() {
+    isMenuOpen = false;
+    burgerMenu.classList.remove("active");
+    mobileNav.classList.remove("active");
+    document.body.style.overflow = "auto";
+  };
+
+  // Close mobile nav when clicking outside
+  mobileNav.addEventListener("click", function (e) {
+    if (e.target === mobileNav) {
+      closeMobileNav();
+    }
+  });
+
+  // Close mobile nav on escape key
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && isMenuOpen) {
+      closeMobileNav();
+    }
+  });
+}
+
+// Modal functionality
+window.openModal = function(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = "block";
+    document.body.style.overflow = "hidden";
+  }
+};
+
+// Close modal when clicking the X
+document.querySelectorAll(".close").forEach((closeBtn) => {
+  closeBtn.onclick = function () {
+    const modal = this.closest('.modal');
+    if (modal) {
+      modal.style.display = "none";
+      document.body.style.overflow = "auto";
+    }
+  };
+});
+
+// Close modal when clicking outside
+window.onclick = function (event) {
+  if (event.target.classList.contains("modal")) {
+    event.target.style.display = "none";
+    document.body.style.overflow = "auto";
+  }
+};
+
+// Escape key closes modal
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape") {
+    document.querySelectorAll(".modal").forEach((modal) => {
+      modal.style.display = "none";
+    });
+    document.body.style.overflow = "auto";
+  }
+});
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+  anchor.addEventListener("click", function (e) {
+    e.preventDefault();
+    const targetId = this.getAttribute("href");
+    const target = document.querySelector(targetId);
+    if (target) {
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
       });
-
-      // Function to close mobile navigation
-      function closeMobileNav() {
-        isMenuOpen = false;
-        burgerMenu.classList.remove("active");
-        mobileNav.classList.remove("active");
-        document.body.style.overflow = "auto";
-      }
-
-      // Close mobile nav when clicking outside
-      mobileNav.addEventListener("click", function (e) {
-        if (e.target === mobileNav) {
-          closeMobileNav();
-        }
-      });
-
-      // Close mobile nav on escape key
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && isMenuOpen) {
-          closeMobileNav();
-        }
-      });
-
-      // Modal functionality
-      function openModal(modalId) {
-        document.getElementById(modalId).style.display = "block";
-        document.body.style.overflow = "hidden";
-      }
-
-      // Close modal when clicking the X
-      document.querySelectorAll(".close").forEach((closeBtn) => {
-        closeBtn.onclick = function () {
-          this.parentElement.parentElement.style.display = "none";
-          document.body.style.overflow = "auto";
-        };
-      });
-
-      // Close modal when clicking outside
-      window.onclick = function (event) {
-        if (event.target.classList.contains("modal")) {
-          event.target.style.display = "none";
-          document.body.style.overflow = "auto";
-        }
-      };
-
-      // Escape key closes modal
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-          document.querySelectorAll(".modal").forEach((modal) => {
-            modal.style.display = "none";
-          });
-          document.body.style.overflow = "auto";
-        }
-      });
-
-      // Smooth scrolling for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute("href"));
-          if (target) {
-            target.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            });
-          }
-        });
-      });
+    }
+  });
+});
     </script>
   </body>
 </html>

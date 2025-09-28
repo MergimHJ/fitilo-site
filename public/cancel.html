@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement annulé - FIT-ILO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cancel-container {
+            text-align: center;
+            padding: 50px 20px;
+            max-width: 600px;
+        }
+        
+        .cancel-icon {
+            font-size: 80px;
+            color: #ff9800;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        
+        .btn {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #ff5252;
+        }
+    </style>
+</head>
+<body>
+    <div class="cancel-container">
+        <div class="cancel-icon">⏸️</div>
+        <h1>Paiement annulé</h1>
+        <p>Aucun montant n'a été débité de votre compte.</p>
+        <p>Si vous avez changé d'avis, vous pouvez toujours revenir et choisir votre programme de transformation.</p>
+        
+        <div style="margin-top: 40px;">
+            <a href="/" class="btn">Retour aux programmes</a>
+        </div>
+    </div>
+</body>
+</html>

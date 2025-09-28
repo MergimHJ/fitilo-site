@@ -1,62 +1,26 @@
 require('dotenv').config();
 const express = require('express');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const cors = require('cors');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// SÉCURITÉ : Middleware de protection (UNE SEULE FOIS)
+// SÉCURITÉ : Middleware de protection
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: [
-        "'self'", 
-        "'unsafe-inline'", 
-        "https://js.stripe.com",
-        "https://checkout.stripe.com"
-      ],
-      scriptSrcAttr: ["'unsafe-inline'"],  // CRUCIAL pour onclick
-      styleSrc: [
-        "'self'", 
-        "'unsafe-inline'",
-        "https://fonts.googleapis.com"
-      ],
-      fontSrc: [
-        "'self'",
-        "https://fonts.gstatic.com"
-      ],
-      imgSrc: [
-        "'self'", 
-        "data:", 
-        "https://images.unsplash.com",
-        "https://*.stripe.com"
-      ],
-      connectSrc: [
-        "'self'", 
-        "https://api.stripe.com",
-        "https://checkout.stripe.com"
-      ],
-      frameSrc: [
-        "'self'", 
-        "https://js.stripe.com", 
-        "https://hooks.stripe.com",
-        "https://checkout.stripe.com"
-      ],
-      formAction: [
-        "'self'", 
-        "https://checkout.stripe.com"
-      ],
-      objectSrc: ["'none'"],
-      upgradeInsecureRequests: []
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https://images.unsplash.com"],
+      connectSrc: ["'self'", "https://api.stripe.com"]
     }
-  },
-  crossOriginEmbedderPolicy: false  // Évite les conflits Stripe
+  }
 }));
 
 app.use(cors({
@@ -82,12 +46,11 @@ const generalLimiter = rateLimit({
   legacyHeaders: false
 });
 
-// Appliquer les limiteurs
 app.use('/create-checkout-session', paymentLimiter);
 app.use(generalLimiter);
 
-// Configuration email SÉCURISÉE (CORRECTION : createTransport au lieu de createTransporter)
-const transporter = nodemailer.createTransport({
+// Configuration email SÉCURISÉE
+const transporter = nodemailer.createTransporter({
   service: 'gmail',
   auth: {
     user: process.env.GMAIL_USER,
@@ -141,7 +104,7 @@ function validateCheckoutData(req, res, next) {
   next();
 }
 
-// ENDPOINT SÉCURISÉ : Création de session de paiement (SANS DUPLICATION)
+// ENDPOINT SÉCURISÉ : Création de session de paiement
 app.post('/create-checkout-session', validateCheckoutData, async (req, res) => {
   try {
     const { price, programName } = req.body;
