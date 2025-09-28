@@ -8,7 +8,7 @@ const app = express();
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'amgmergim@gmail.com',
+    user: 'contact.fitilo@gmail.com',
     pass: process.env.GMAIL_PASSWORD
   }
 });
@@ -76,7 +76,7 @@ function sendProgram(customerEmail, programName) {
   const fileName = programFiles[programName] || 'Programme.pdf';
 
   const mailOptions = {
-    from: 'korkisilona@gmail.com',
+    from: 'contact.fitilo@gmail.com',
     to: customerEmail,
     subject: `Votre programme ${programName} - FIT-ILO`,
     html: `
