@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FIT-ILO - Transform Your Body</title>
+    <meta
+      name="description"
+      content="Programmes fitness personnalisés par Ilona à Bruxelles"
+    />
+    <link rel="icon" type="image/png" href="assets/logo/FIT-ILOv1.png" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        line-height: 1.6;
+        color: #e5e5e5;
+        background: #0a0a0a;
+        scroll-behavior: smooth;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      header {
+        background: #111;
+        padding: 20px 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #e5e5e5;
+        text-decoration: none;
+      }
+
+      .logo img {
+        height: 40px;
+      }
+
+      /* Menu burger styles */
+      .burger-menu {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        padding: 5px;
+        z-index: 1001;
+      }
+
+      .burger-line {
+        width: 25px;
+        height: 3px;
+        background-color: #e5e5e5;
+        margin: 3px 0;
+        transition: 0.3s;
+        border-radius: 2px;
+      }
+
+      .burger-menu.active .burger-line:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+      }
+
+      .burger-menu.active .burger-line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .burger-menu.active .burger-line:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+      }
+
+      /* Navigation styles */
+      .nav-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+      }
+
+      nav ul {
+        display: flex;
+        gap: 25px;
+        list-style: none;
+      }
+
+      nav a {
+        color: #e5e5e5;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      nav a:hover {
+        color: #ff6b6b;
+      }
+
+      .contact-btn {
+        background: #e5e5e5;
+        color: #0a0a0a;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .contact-btn:hover {
+        background: #fff;
+        transform: translateY(-2px);
+      }
+
+      /* Mobile navigation overlay */
+      .mobile-nav {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(17, 17, 17, 0.98);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .mobile-nav.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .mobile-nav ul {
+        list-style: none;
+        text-align: center;
+      }
+
+      .mobile-nav li {
+        margin: 30px 0;
+      }
+
+      .mobile-nav a {
+        color: #e5e5e5;
+        text-decoration: none;
+        font-size: 24px;
+        font-weight: 500;
+        transition: color 0.3s;
+        display: block;
+        padding: 15px;
+      }
+
+      .mobile-nav a:hover {
+        color: #ff6b6b;
+      }
+
+      .mobile-nav .contact-btn {
+        font-size: 20px;
+        padding: 15px 30px;
+        margin-top: 30px;
+        display: inline-block;
+      }
+
+      .hero {
+        text-align: center;
+        padding: 100px 20px;
+        background: linear-gradient(
+            rgba(10, 10, 10, 0.7),
+            rgba(10, 10, 10, 0.8)
+          ),
+          url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&h=1080&fit=crop&auto=format")
+            center/cover;
+      }
+
+      .hero h1 {
+        font-size: 48px;
+        font-weight: 300;
+        margin-bottom: 20px;
+      }
+
+      .hero .highlight {
+        font-weight: bold;
+        color: #ff6b6b;
+      }
+
+      .hero p {
+        color: #aaa;
+        font-size: 18px;
+        margin-bottom: 30px;
+      }
+
+      .hero .cta-btn {
+        background: #ff6b6b;
+        color: #fff;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 25px;
+        font-size: 18px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .hero .cta-btn:hover {
+        background: #ff5252;
+        transform: translateY(-2px);
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 36px;
+        font-weight: 300;
+        margin-bottom: 50px;
+        margin-top: 50px;
+      }
+
+      .programs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+      }
+
+      .program-card {
+        background: #1a1a1a;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+        position: relative;
+        border: 1px solid #333;
+        overflow: hidden;
+      }
+
+      .program-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .program-card.featured {
+        border: 2px solid #ff6b6b;
+      }
+
+      .program-card.featured::before {
+        content: "POPULAIRE";
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ff6b6b;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 10;
+      }
+
+      .program-image {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+      }
+
+      .program-image::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.3),
+          rgba(0, 0, 0, 0.7)
+        );
+      }
+
+      .program-image.beginner {
+        background-image: url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format");
+      }
+
+      .program-image.glutes {
+        background-image: url("https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&h=300&fit=crop&auto=format");
+      }
+
+      .program-image.complete {
+        background-image: url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format");
+      }
+
+      .program-content {
+        padding: 30px;
+      }
+
+      .program-title {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 15px;
+        color: #e5e5e5;
+      }
+
+      .program-description {
+        color: #888;
+        margin-bottom: 20px;
+      }
+
+      .program-features {
+        list-style: none;
+        margin-bottom: 25px;
+        text-align: left;
+      }
+
+      .program-features li {
+        padding: 5px 0 5px 20px;
+        color: #888;
+        position: relative;
+      }
+
+      .program-features li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #ff6b6b;
+        font-weight: bold;
+      }
+
+      .program-price {
+        font-size: 32px;
+        font-weight: bold;
+        color: #e5e5e5;
+        margin-bottom: 20px;
+      }
+
+      .program-price .currency {
+        font-size: 18px;
+        color: #888;
+      }
+
+      .buy-btn {
+        background: #e5e5e5;
+        color: #0a0a0a;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+      }
+
+      .buy-btn:hover {
+        background: #ffffff;
+        transform: translateY(-2px);
+      }
+
+      .featured .buy-btn {
+        background: #ff6b6b;
+      }
+
+      .featured .buy-btn:hover {
+        background: #ff5252;
+      }
+
+      .about {
+        padding: 80px 0;
+      }
+
+      .about-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+      }
+
+      .about-text h2 {
+        font-size: 36px;
+        font-weight: 300;
+        margin-bottom: 25px;
+        color: #e5e5e5;
+      }
+
+      .about-image {
+        background: linear-gradient(135deg, #ff6b6b, #ffa500);
+        height: 400px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 48px;
+      }
+
+      .about-text p {
+        color: #888;
+        margin-bottom: 20px;
+        line-height: 1.7;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .stat {
+        text-align: center;
+        padding: 20px;
+      }
+
+      .stat-number {
+        font-size: 36px;
+        font-weight: bold;
+        color: #ff6b6b;
+        margin-bottom: 10px;
+      }
+
+      .stat-label {
+        color: #888;
+        font-size: 14px;
+      }
+
+      .testimonials {
+        padding: 60px 0;
+        background: #111;
+      }
+
+      .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+      }
+
+      .testimonial-card {
+        background: #1a1a1a;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        border: 1px solid #333;
+      }
+
+      .testimonial-text {
+        color: #ccc;
+        font-style: italic;
+        margin-bottom: 15px;
+      }
+
+      .testimonial-author {
+        font-weight: bold;
+        color: #ff6b6b;
+      }
+
+      .contact {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #ff6b6b, #ffa500, #0a0a0a);
+        color: #fff;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .contact::before {
+        content: "";
+        position: absolute;
+        top: -50px;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: #111;
+        clip-path: polygon(0 100%, 100% 0, 100% 100%);
+      }
+
+      .contact-subtitle {
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 40px;
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+      }
+
+      .contact-card {
+        background: rgba(26, 26, 26, 0.8);
+        padding: 30px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .contact-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .contact-card .icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+      }
+
+      .contact-card h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #fff;
+      }
+
+      .contact-card p {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .legal-footer {
+        background: #0a0a0a;
+        color: #e5e5e5;
+        padding: 60px 0 20px;
+      }
+
+      .legal-footer .container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0 40px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .footer-section {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .footer-section h3 {
+        color: #ff6b6b;
+        font-size: 16px;
+        margin-bottom: 15px;
+        font-weight: 600;
+      }
+
+      .footer-section ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-section li {
+        margin-bottom: 0;
+      }
+
+      .footer-section a {
+        color: #ccc;
+        text-decoration: none;
+        transition: color 0.3s;
+        font-size: 13px;
+      }
+
+      .footer-section a:hover {
+        color: #ff6b6b;
+      }
+
+      .footer-section p {
+        color: #ccc;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      .company-info p {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .footer-bottom {
+        border-top: 1px solid #333;
+        padding-top: 20px;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .footer-bottom p {
+        color: #888;
+        font-size: 12px;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .footer-links a {
+        color: #888;
+        text-decoration: none;
+        font-size: 12px;
+        transition: color 0.3s;
+      }
+
+      .footer-links a:hover {
+        color: #ff6b6b;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+      }
+
+      .modal-content {
+        background: #fff;
+        margin: 2% auto;
+        padding: 30px;
+        width: 90%;
+        max-width: 800px;
+        border-radius: 8px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        position: absolute;
+        top: 15px;
+        right: 25px;
+      }
+
+      .close:hover {
+        color: #000;
+      }
+
+      .modal h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
+
+      .modal h3 {
+        color: #ff6b6b;
+        margin: 25px 0 15px;
+        font-size: 18px;
+      }
+
+      .modal p,
+      .modal li {
+        color: #666;
+        margin-bottom: 10px;
+        line-height: 1.6;
+      }
+
+      .modal ul {
+        margin-left: 20px;
+        margin-bottom: 15px;
+      }
+
+      /* Media Queries pour Mobile */
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 20px;
+        }
+
+        /* Header mobile */
+        .header-content {
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .nav-wrapper {
+          display: none;
+        }
+
+        .burger-menu {
+          display: flex;
+        }
+
+        .mobile-nav {
+          display: flex;
+        }
+
+        /* Hero mobile */
+        .hero {
+          padding: 60px 20px;
+        }
+
+        .hero h1 {
+          font-size: 28px;
+          line-height: 1.2;
+          margin-bottom: 15px;
+        }
+
+        .hero p {
+          font-size: 16px;
+          margin-bottom: 25px;
+        }
+
+        .hero .cta-btn {
+          font-size: 16px;
+          padding: 12px 24px;
+        }
+
+        /* Section titles mobile */
+        .section-title {
+          font-size: 28px;
+          margin-bottom: 30px;
+          margin-top: 30px;
+        }
+
+        /* Programs mobile */
+        .programs-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .program-content {
+          padding: 20px;
+        }
+
+        .program-title {
+          font-size: 20px;
+        }
+
+        .program-price {
+          font-size: 28px;
+        }
+
+        /* About mobile */
+        .about {
+          padding: 60px 0;
+        }
+
+        .about-content {
+          grid-template-columns: 1fr;
+          gap: 30px;
+          text-align: center;
+        }
+
+        .about-text h2 {
+          font-size: 28px;
+        }
+
+        .about-image {
+          height: 250px;
+          order: -1;
+        }
+
+        .stats {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        /* Testimonials mobile */
+        .testimonials {
+          padding: 40px 0;
+        }
+
+        .testimonial-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .testimonial-card {
+          padding: 20px;
+        }
+
+        /* Contact mobile */
+        .contact {
+          padding: 60px 0;
+        }
+
+        .contact-subtitle {
+          font-size: 16px;
+          margin-bottom: 30px;
+        }
+
+        .contact-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .contact-card {
+          padding: 25px;
+        }
+
+        /* Footer mobile */
+        .legal-footer {
+          padding: 40px 0 20px;
+        }
+
+        .footer-content {
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .footer-section a {
+          font-size: 14px;
+        }
+
+        .footer-bottom {
+          flex-direction: column;
+          text-align: center;
+          gap: 15px;
+        }
+
+        .footer-links {
+          justify-content: center;
+        }
+
+        /* Modal mobile */
+        .modal-content {
+          width: 95%;
+          padding: 20px;
+          margin: 5% auto;
+          max-height: 85vh;
+        }
+
+        .modal h2 {
+          font-size: 20px;
+          padding-right: 30px;
+        }
+
+        .close {
+          top: 10px;
+          right: 15px;
+          font-size: 24px;
+        }
+      }
+
+      /* Petits mobiles */
+      @media (max-width: 480px) {
+        .hero h1 {
+          font-size: 24px;
+        }
+
+        .section-title {
+          font-size: 24px;
+        }
+
+        .about-text h2 {
+          font-size: 24px;
+        }
+
+        .contact-card .icon {
+          font-size: 30px;
+        }
+
+        .program-image {
+          height: 150px;
+        }
+
+        .about-image {
+          height: 200px;
+        }
+      }
+
+      /* Landscape mobile */
+      @media (max-width: 768px) and (orientation: landscape) {
+        .hero {
+          padding: 40px 20px;
+        }
+
+        .hero h1 {
+          font-size: 26px;
+        }
+
+        .mobile-nav {
+          padding: 20px;
+        }
+
+        .mobile-nav li {
+          margin: 15px 0;
+        }
+
+        .mobile-nav a {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <a href="index.html" class="logo">
+            <img src="assets/logo/FIT-ILOv1.png" alt="FIT-ILO" />
+          </a>
+
+          <!-- Navigation desktop -->
+          <div class="nav-wrapper">
+            <nav>
+              <ul>
+                <li><a href="#programs">Programmes</a></li>
+                <li><a href="#about">À propos</a></li>
+                <li><a href="#testimonials">Témoignages</a></li>
+              </ul>
+            </nav>
+            <a href="#contact" class="contact-btn">Contact</a>
+          </div>
+
+          <!-- Menu burger -->
+          <div class="burger-menu" id="burgerMenu">
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation mobile -->
+    <div class="mobile-nav" id="mobileNav">
+      <ul>
+        <li><a href="#programs" onclick="closeMobileNav()">Programmes</a></li>
+        <li><a href="#about" onclick="closeMobileNav()">À propos</a></li>
+        <li>
+          <a href="#testimonials" onclick="closeMobileNav()">Témoignages</a>
+        </li>
+        <li>
+          <a href="#contact" class="contact-btn" onclick="closeMobileNav()"
+            >Contact</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <section class="hero">
+      <div class="container">
+        <h1>
+          Transform Your Body, <span class="highlight">Elevate Your Mind</span>
+        </h1>
+        <p>Coaching fitness & nutrition sur mesure à Bruxelles avec Ilona</p>
+        <a href="#programs"
+          ><button class="cta-btn">Commence dès aujourd'hui</button></a
+        >
+      </div>
+    </section>
+
+    <section class="programs" id="programs">
+      <div class="container">
+        <h2 class="section-title">Choisissez votre transformation</h2>
+
+        <div class="programs-grid">
+          <div class="program-card">
+            <div class="program-image beginner"></div>
+            <div class="program-content">
+              <h3 class="program-title">Programme Débutant</h3>
+              <p class="program-description">
+                Parfait pour commencer votre transformation en douceur
+              </p>
+              <ul class="program-features">
+                <li>3 séances par semaine</li>
+                <li>Guide nutrition inclus</li>
+                <li>Support 24/7</li>
+                <li>Accès à vie</li>
+              </ul>
+              <div class="program-price">29<span class="currency">€</span></div>
+              <button
+                class="buy-btn"
+                data-price="29"
+                data-program="Programme Débutant"
+                onclick="buyProgram(this)"
+              >
+                Acheter maintenant
+              </button>
+            </div>
+          </div>
+
+          <div class="program-card featured">
+            <div class="program-image glutes"></div>
+            <div class="program-content">
+              <h3 class="program-title">Programme Fessiers</h3>
+              <p class="program-description">
+                Sculpter et tonifier vos fessiers efficacement
+              </p>
+              <ul class="program-features">
+                <li>4 séances par semaine</li>
+                <li>Exercices ciblés</li>
+                <li>Plan alimentaire détaillé</li>
+                <li>Suivi personnalisé</li>
+              </ul>
+              <div class="program-price">39<span class="currency">€</span></div>
+              <button
+                class="buy-btn"
+                data-price="39"
+                data-program="Programme Fessiers"
+                onclick="buyProgram(this)"
+              >
+                Acheter maintenant
+              </button>
+            </div>
+          </div>
+
+          <div class="program-card">
+            <div class="program-image complete"></div>
+            <div class="program-content">
+              <h3 class="program-title">Programme Complet</h3>
+              <p class="program-description">
+                Transformation complète corps et esprit
+              </p>
+              <ul class="program-features">
+                <li>5 séances par semaine</li>
+                <li>Coaching personnalisé</li>
+                <li>Suivi nutrition complet</li>
+                <li>Accompagnement mental</li>
+              </ul>
+              <div class="program-price">59<span class="currency">€</span></div>
+              <button
+                class="buy-btn"
+                data-price="59"
+                data-program="Programme Complet"
+                onclick="buyProgram(this)"
+              >
+                Acheter maintenant
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="container">
+        <div class="about-content">
+          <div class="about-text">
+            <h2>Salut, je suis <span class="highlight">Ilona</span></h2>
+            <p>
+              Coach fitness depuis plus de 3 ans, j'ai accompagné plus de 30
+              femmes dans leur transformation.
+            </p>
+            <p>
+              Mon approche combine entraînement personnalisé, nutrition
+              équilibrée et bien-être mental pour des résultats durables.
+            </p>
+            <div class="stats">
+              <div class="stat">
+                <div class="stat-number">30+</div>
+                <div class="stat-label">Clientes transformées</div>
+              </div>
+              <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Taux de satisfaction</div>
+              </div>
+              <div class="stat">
+                <div class="stat-number">3+</div>
+                <div class="stat-label">Années d'expérience</div>
+              </div>
+            </div>
+          </div>
+          <div class="about-image">💪</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials" id="testimonials">
+      <div class="container">
+        <h2 class="section-title">Témoignages</h2>
+        <div class="testimonial-grid">
+          <div class="testimonial-card">
+            <p class="testimonial-text">
+              "Grâce au programme complet, j'ai perdu 8kg et gagné une vraie
+              confiance en moi."
+            </p>
+            <p class="testimonial-author">— Sophie, 28 ans</p>
+          </div>
+          <div class="testimonial-card">
+            <p class="testimonial-text">
+              "Les exercices sont variés et motivants, Ilona est toujours là
+              pour soutenir."
+            </p>
+            <p class="testimonial-author">— Clara, 32 ans</p>
+          </div>
+          <div class="testimonial-card">
+            <p class="testimonial-text">
+              "Le suivi nutrition est top, je mange mieux et je me sens pleine
+              d'énergie."
+            </p>
+            <p class="testimonial-author">— Julie, 25 ans</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="container">
+        <h2 class="section-title">Prête à commencer ?</h2>
+        <p class="contact-subtitle">
+          Choisis ton moyen préféré pour me contacter et démarrer ta
+          transformation
+        </p>
+
+        <div class="contact-grid">
+          <a href="mailto:korkisilona@gmail.com" class="contact-card">
+            <div class="icon">✉️</div>
+            <h3>Email</h3>
+            <p>korkisilona@gmail.com</p>
+          </a>
+
+          <a
+            href="https://www.instagram.com/ilo.krs"
+            target="_blank"
+            class="contact-card"
+          >
+            <div class="icon">📸</div>
+            <h3>Instagram</h3>
+            <p>@ilo.krs</p>
+          </a>
+
+          <a
+            href="https://www.tiktok.com/@ilona.krs"
+            target="_blank"
+            class="contact-card"
+          >
+            <div class="icon">📱</div>
+            <h3>TikTok</h3>
+            <p>@ilona.krs</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="legal-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>FIT-ILO</h3>
+            <div class="company-info">
+              <p><strong>Ilona Korkis</strong></p>
+              <p>Coach Fitness & Nutrition</p>
+              <p>korkisilona@gmail.com</p>
+              <p>@ilo.krs</p>
+            </div>
+          </div>
+
+          <div class="footer-section">
+            <h3>Programmes</h3>
+            <ul>
+              <li><a href="#programs">Programme Débutant</a></li>
+              <li><a href="#programs">Programme Fessiers</a></li>
+              <li><a href="#programs">Programme Complet</a></li>
+              <li><a href="#about">À propos d'Ilona</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h3>Support</h3>
+            <ul>
+              <li><a href="#contact">Contact</a></li>
+              <li><a href="#" onclick="openModal('faq')">FAQ</a></li>
+              <li><a href="#testimonials">Témoignages</a></li>
+              <li>
+                <a href="#" onclick="openModal('remboursement')"
+                  >Remboursement</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h3>Informations légales</h3>
+            <ul>
+              <li>
+                <a href="#" onclick="openModal('mentions')">Mentions légales</a>
+              </li>
+              <li>
+                <a href="#" onclick="openModal('cgv')">Conditions générales</a>
+              </li>
+              <li>
+                <a href="#" onclick="openModal('confidentialite')"
+                  >Confidentialité</a
+                >
+              </li>
+              <li><a href="#" onclick="openModal('cookies')">Cookies</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2025 FIT-ILO - Ilona Korkis. Tous droits réservés.</p>
+          <div class="footer-links">
+            <a href="#" onclick="openModal('mentions')">Mentions légales</a>
+            <a href="#" onclick="openModal('confidentialite')"
+              >Confidentialité</a
+            >
+            <a href="#" onclick="openModal('cookies')">Cookies</a>
+            <a href="#" onclick="openModal('cgv')">CGV</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="mentions" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Mentions légales</h2>
+
+        <h3>1. Éditeur du site</h3>
+        <p>
+          <strong>Nom :</strong> Ilona Korkis<br />
+          <strong>Activité :</strong> Coach fitness et nutrition<br />
+          <strong>Email :</strong> korkisilona@gmail.com<br />
+          <strong>Adresse :</strong> Bruxelles, Belgique
+        </p>
+
+        <p>
+          <em
+            >Note : Si vous êtes inscrite comme indépendante, ajoutez votre
+            numéro d'entreprise BCE ici.</em
+          >
+        </p>
+
+        <h3>2. Hébergement</h3>
+        <p>
+          Site hébergé par votre prestataire d'hébergement web.<br />
+          <em>À compléter avec les informations de votre hébergeur.</em>
+        </p>
+
+        <h3>3. Propriété intellectuelle</h3>
+        <p>
+          L'ensemble des contenus présents sur ce site (textes, images, vidéos,
+          programmes d'entraînement) sont la propriété exclusive d'Ilona Korkis
+          et sont protégés par les droits d'auteur.
+        </p>
+
+        <h3>4. Responsabilité</h3>
+        <p>
+          Les programmes proposés sont des conseils généraux. Il est recommandé
+          de consulter un médecin avant de commencer tout programme d'exercices.
+        </p>
+
+        <h3>5. Contact</h3>
+        <p>
+          Pour toute question relative aux mentions légales, contactez-nous à :
+          korkisilona@gmail.com
+        </p>
+      </div>
+    </div>
+
+    <div id="cgv" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Conditions générales de vente</h2>
+
+        <h3>Article 1 - Objet</h3>
+        <p>
+          Les présentes conditions générales régissent la vente des programmes
+          fitness digitaux proposés par Ilona Korkis via le site FIT-ILO.
+        </p>
+
+        <h3>Article 2 - Prix</h3>
+        <p>
+          Les prix sont indiqués en euros, toutes taxes comprises. FIT-ILO se
+          réserve le droit de modifier ses prix à tout moment.
+        </p>
+
+        <h3>Article 3 - Commande et paiement</h3>
+        <p>
+          La commande est ferme et définitive dès validation du paiement. Le
+          paiement s'effectue par carte bancaire via notre système sécurisé.
+        </p>
+
+        <h3>Article 4 - Livraison</h3>
+        <p>
+          Les programmes digitaux sont livrés immédiatement après paiement par
+          email à l'adresse indiquée lors de la commande.
+        </p>
+
+        <h3>Article 5 - Droit de rétractation</h3>
+        <p>
+          Conformément à l'article VI.53 du Code de droit économique belge, vous
+          disposez d'un délai de 14 jours pour exercer votre droit de
+          rétractation, sauf si vous avez expressément renoncé à ce droit pour
+          les contenus numériques.
+        </p>
+
+        <h3>Article 6 - Garantie satisfait ou remboursé</h3>
+        <p>
+          Nous proposons une garantie de satisfaction de 30 jours. Si vous
+          n'êtes pas satisfaite, contactez-nous pour un remboursement.
+        </p>
+
+        <h3>Article 7 - Responsabilité</h3>
+        <p>
+          L'utilisation des programmes se fait sous votre propre responsabilité.
+          Il est recommandé de consulter un professionnel de santé avant tout
+          programme d'exercices.
+        </p>
+
+        <h3>Article 8 - Propriété intellectuelle</h3>
+        <p>
+          Les programmes sont protégés par le droit d'auteur. Toute reproduction
+          ou diffusion est interdite sans autorisation.
+        </p>
+
+        <h3>Article 9 - Données personnelles</h3>
+        <p>
+          Vos données sont traitées conformément à notre politique de
+          confidentialité et au RGPD.
+        </p>
+
+        <h3>Article 10 - Droit applicable</h3>
+        <p>
+          Les présentes conditions sont régies par le droit belge. Tout litige
+          relève de la compétence des tribunaux de Bruxelles.
+        </p>
+      </div>
+    </div>
+
+    <div id="confidentialite" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Politique de confidentialité</h2>
+        <p><em>Conforme au RGPD - Dernière mise à jour : janvier 2025</em></p>
+
+        <h3>1. Responsable du traitement</h3>
+        <p>
+          <strong>Ilona Korkis</strong><br />
+          Email : korkisilona@gmail.com<br />
+          Adresse : Bruxelles, Belgique
+        </p>
+
+        <h3>2. Données collectées</h3>
+        <p>Nous collectons les données suivantes :</p>
+        <ul>
+          <li>
+            <strong>Données d'identification :</strong> nom, prénom, email
+          </li>
+          <li>
+            <strong>Données de paiement :</strong> traitées par notre
+            prestataire sécurisé
+          </li>
+          <li><strong>Données de navigation :</strong> cookies, adresse IP</li>
+          <li>
+            <strong>Données de communication :</strong> messages, questions
+          </li>
+        </ul>
+
+        <h3>3. Finalités du traitement</h3>
+        <p>Vos données sont utilisées pour :</p>
+        <ul>
+          <li>Traitement et livraison de votre commande</li>
+          <li>Support client et communication</li>
+          <li>Amélioration de nos services</li>
+          <li>Respect de nos obligations légales</li>
+        </ul>
+
+        <h3>4. Base légale</h3>
+        <p>Le traitement de vos données est basé sur :</p>
+        <ul>
+          <li>L'exécution du contrat (livraison des programmes)</li>
+          <li>Votre consentement (newsletter, cookies)</li>
+          <li>Nos intérêts légitimes (amélioration des services)</li>
+        </ul>
+
+        <h3>5. Conservation des données</h3>
+        <p>Vos données sont conservées :</p>
+        <ul>
+          <li>Données de commande : 10 ans (obligations comptables)</li>
+          <li>Données de contact : jusqu'à désabonnement</li>
+          <li>Cookies : 13 mois maximum</li>
+        </ul>
+
+        <h3>6. Vos droits</h3>
+        <p>Vous disposez des droits suivants :</p>
+        <ul>
+          <li>Droit d'accès à vos données</li>
+          <li>Droit de rectification</li>
+          <li>Droit à l'effacement</li>
+          <li>Droit à la limitation du traitement</li>
+          <li>Droit à la portabilité</li>
+          <li>Droit d'opposition</li>
+          <li>Droit de retirer votre consentement</li>
+        </ul>
+        <p>Pour exercer vos droits : korkisilona@gmail.com</p>
+
+        <h3>7. Sécurité</h3>
+        <p>
+          Nous mettons en place des mesures techniques et organisationnelles
+          pour protéger vos données contre tout accès non autorisé.
+        </p>
+
+        <h3>8. Transferts de données</h3>
+        <p>
+          Vos données peuvent être transférées à nos prestataires techniques
+          (paiement, hébergement) dans l'UE ou dans des pays disposant d'une
+          décision d'adéquation.
+        </p>
+
+        <h3>9. Réclamation</h3>
+        <p>
+          Vous pouvez introduire une réclamation auprès de l'Autorité de
+          protection des données belge :
+          <a href="https://www.autoriteprotectiondonnees.be" target="_blank"
+            >www.autoriteprotectiondonnees.be</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <div id="cookies" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Politique des cookies</h2>
+
+        <h3>Qu'est-ce qu'un cookie ?</h3>
+        <p>
+          Un cookie est un petit fichier texte déposé sur votre ordinateur lors
+          de votre visite sur notre site web.
+        </p>
+
+        <h3>Types de cookies utilisés</h3>
+
+        <h4>Cookies essentiels (obligatoires)</h4>
+        <p>Ces cookies sont nécessaires au fonctionnement du site :</p>
+        <ul>
+          <li>Cookies de session pour maintenir votre connexion</li>
+          <li>Cookies de sécurité pour protéger contre les attaques</li>
+          <li>Cookies de panier d'achat</li>
+        </ul>
+
+        <h4>Cookies analytiques (optionnels)</h4>
+        <p>Avec votre consentement, nous utilisons :</p>
+        <ul>
+          <li>
+            <strong>Google Analytics :</strong> pour analyser le trafic du site
+          </li>
+          <li>Conservation : 26 mois</li>
+          <li>Finalité : améliorer l'expérience utilisateur</li>
+        </ul>
+
+        <h4>Cookies de réseaux sociaux (optionnels)</h4>
+        <ul>
+          <li>
+            <strong>Instagram/Facebook :</strong> pour l'intégration des réseaux
+            sociaux
+          </li>
+          <li>Conservation : 2 ans</li>
+        </ul>
+
+        <h3>Gestion des cookies</h3>
+        <p>Vous pouvez :</p>
+        <ul>
+          <li>
+            Accepter ou refuser les cookies via notre bandeau de consentement
+          </li>
+          <li>Modifier vos préférences à tout moment</li>
+          <li>Supprimer les cookies via votre navigateur</li>
+        </ul>
+
+        <h3>Configuration par navigateur</h3>
+        <p>Vous pouvez configurer votre navigateur pour :</p>
+        <ul>
+          <li>
+            <strong>Chrome :</strong> Paramètres > Confidentialité et sécurité >
+            Cookies
+          </li>
+          <li>
+            <strong>Firefox :</strong> Préférences > Vie privée et sécurité
+          </li>
+          <li><strong>Safari :</strong> Préférences > Confidentialité</li>
+          <li>
+            <strong>Edge :</strong> Paramètres > Cookies et autorisations de
+            site
+          </li>
+        </ul>
+
+        <h3>Contact</h3>
+        <p>
+          Pour toute question sur notre politique des cookies :
+          korkisilona@gmail.com
+        </p>
+      </div>
+    </div>
+
+    <div id="remboursement" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Politique de remboursement</h2>
+
+        <h3>Garantie satisfait ou remboursé 30 jours</h3>
+        <p>
+          Chez FIT-ILO, nous sommes convaincues de la qualité de nos programmes.
+          C'est pourquoi nous offrons une garantie de satisfaction de 30 jours.
+        </p>
+
+        <h3>Conditions de remboursement</h3>
+        <ul>
+          <li>Demande dans les 30 jours suivant l'achat</li>
+          <li>Avoir suivi le programme pendant au moins 2 semaines</li>
+          <li>Fournir un retour constructif sur votre expérience</li>
+        </ul>
+
+        <h3>Comment demander un remboursement ?</h3>
+        <p>Contactez-nous à <strong>korkisilona@gmail.com</strong> avec :</p>
+        <ul>
+          <li>Votre nom et email de commande</li>
+          <li>Le programme concerné</li>
+          <li>La raison de votre demande</li>
+          <li>Vos retours sur le programme</li>
+        </ul>
+
+        <h3>Délai de traitement</h3>
+        <p>
+          Les remboursements sont traités sous 5-7 jours ouvrables. Le montant
+          sera recrédité sur votre compte bancaire sous 5-10 jours
+          supplémentaires.
+        </p>
+
+        <h3>Exceptions</h3>
+        <p>
+          Les programmes en promotion ou offerts ne sont pas remboursables, sauf
+          défaut manifeste.
+        </p>
+      </div>
+    </div>
+
+    <div id="faq" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Questions fréquemment posées</h2>
+
+        <h3>💳 Comment se déroule le paiement ?</h3>
+        <p>
+          Le paiement est sécurisé et accepte les cartes bancaires, PayPal et
+          Bancontact. Vous recevrez votre programme immédiatement après
+          confirmation du paiement.
+        </p>
+
+        <h3>📱 Sur quels supports puis-je consulter mon programme ?</h3>
+        <p>
+          Nos programmes sont compatibles avec tous les appareils : smartphone,
+          tablette, ordinateur. Vous recevrez un lien de téléchargement par
+          email.
+        </p>
+
+        <h3>🏋️‍♀️ Ai-je besoin d'équipement spécialisé ?</h3>
+        <p>
+          La plupart de nos exercices peuvent se faire à la maison avec un
+          minimum d'équipement. Chaque programme précise le matériel nécessaire.
+        </p>
+
+        <h3>📞 Comment obtenir de l'aide ?</h3>
+        <p>
+          Ilona est disponible par email (korkisilona@gmail.com) et sur
+          Instagram (@ilo.krs) pour répondre à toutes vos questions.
+        </p>
+
+        <h3>🎯 Les programmes conviennent-ils aux débutantes ?</h3>
+        <p>
+          Oui ! Le programme débutant est spécialement conçu pour celles qui
+          commencent. Chaque exercice est expliqué étape par étape.
+        </p>
+
+        <h3>⏱️ Combien de temps durent les séances ?</h3>
+        <p>
+          Les séances durent entre 30 et 60 minutes selon le programme choisi et
+          votre niveau.
+        </p>
+
+        <h3>🔄 Puis-je refaire un programme ?</h3>
+        <p>
+          Absolument ! Une fois acheté, le programme est à vous à vie. Vous
+          pouvez le recommencer autant de fois que vous le souhaitez.
+        </p>
+
+        <h3>👥 Y a-t-il une communauté ?</h3>
+        <p>
+          Rejoignez notre communauté Instagram @ilo.krs pour partager votre
+          progression et échanger avec d'autres participantes !
+        </p>
+      </div>
+    </div>
+
+    <!-- Stripe JS -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+      // Configuration Stripe - REMPLACEZ par votre clé publique
+      const stripe = Stripe('pk_test_51SBJpBRpUZaKe83RyEVbgWecoZpJHJTCrAfPQNooJRRQlIfBv1fzkZTPqN2PWB6NBOvyLMN0PW8uITFzRWGap9ph00QHE2A1Ro');
+      
+      // Fonction pour acheter un programme
+      async function buyProgram(button) {
+        const price = button.getAttribute('data-price');
+        const program = button.getAttribute('data-program');
+        
+        // Désactiver le bouton pendant le traitement
+        button.disabled = true;
+        button.textContent = 'Traitement...';
+        
+        try {
+          // Appel au serveur pour créer la session de paiement
+          const response = await fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              price: parseInt(price),
+              programName: program
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Erreur réseau');
+          }
+          
+          const session = await response.json();
+          
+          // Rediriger vers Stripe Checkout
+          const result = await stripe.redirectToCheckout({
+            sessionId: session.id
+          });
+          
+          if (result.error) {
+            console.error('Erreur Stripe:', result.error);
+            alert('Erreur lors du paiement: ' + result.error.message);
+          }
+          
+        } catch (error) {
+          console.error('Erreur:', error);
+          alert('Une erreur est survenue. Veuillez réessayer ou contactez le support.');
+        } finally {
+          // Réactiver le bouton
+          button.disabled = false;
+          button.textContent = 'Acheter maintenant';
+        }
+      }
+
+      // Menu burger functionality
+      const burgerMenu = document.getElementById("burgerMenu");
+      const mobileNav = document.getElementById("mobileNav");
+      let isMenuOpen = false;
+
+      burgerMenu.addEventListener("click", function () {
+        isMenuOpen = !isMenuOpen;
+
+        if (isMenuOpen) {
+          burgerMenu.classList.add("active");
+          mobileNav.classList.add("active");
+          document.body.style.overflow = "hidden";
+        } else {
+          burgerMenu.classList.remove("active");
+          mobileNav.classList.remove("active");
+          document.body.style.overflow = "auto";
+        }
+      });
+
+      // Function to close mobile navigation
+      function closeMobileNav() {
+        isMenuOpen = false;
+        burgerMenu.classList.remove("active");
+        mobileNav.classList.remove("active");
+        document.body.style.overflow = "auto";
+      }
+
+      // Close mobile nav when clicking outside
+      mobileNav.addEventListener("click", function (e) {
+        if (e.target === mobileNav) {
+          closeMobileNav();
+        }
+      });
+
+      // Close mobile nav on escape key
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && isMenuOpen) {
+          closeMobileNav();
+        }
+      });
+
+      // Modal functionality
+      function openModal(modalId) {
+        document.getElementById(modalId).style.display = "block";
+        document.body.style.overflow = "hidden";
+      }
+
+      // Close modal when clicking the X
+      document.querySelectorAll(".close").forEach((closeBtn) => {
+        closeBtn.onclick = function () {
+          this.parentElement.parentElement.style.display = "none";
+          document.body.style.overflow = "auto";
+        };
+      });
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        if (event.target.classList.contains("modal")) {
+          event.target.style.display = "none";
+          document.body.style.overflow = "auto";
+        }
+      };
+
+      // Escape key closes modal
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          document.querySelectorAll(".modal").forEach((modal) => {
+            modal.style.display = "none";
+          });
+          document.body.style.overflow = "auto";
+        }
+      });
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
