@@ -124,21 +124,43 @@ app.get('/config', (req, res) => {
 
 // VALIDATION des données d'entrée
 function validateCheckoutData(req, res, next) {
-  const { price, programName } = req.body;
+  const { price, programName, email } = req.body;
   
   // Validation du prix
   const validPrices = [29, 39, 59];
   if (!validPrices.includes(parseInt(price))) {
+    console.log('❌ Prix invalide:', price);
     return res.status(400).json({ error: 'Prix invalide' });
   }
   
   // Validation du nom du programme
   const validPrograms = ['Programme Débutant', 'Programme Fessiers', 'Programme Complet'];
   if (!validPrograms.includes(programName)) {
+    console.log('❌ Programme invalide:', programName);
     return res.status(400).json({ error: 'Programme invalide' });
   }
   
+  // NOUVELLE VALIDATION : Email (si fourni dans la requête)
+  if (email && !isValidEmail(email)) {
+    console.log('❌ Email invalide:', email);
+    return res.status(400).json({ error: 'Format d\'email invalide' });
+  }
+  
   next();
+}
+
+// NOUVELLE FONCTION : Validation format email
+function isValidEmail(email) {
+  // Regex RFC 5322 simplifiée (couvre 99% des cas réels)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+  // Tests de sécurité supplémentaires
+  if (!email || typeof email !== 'string') return false;
+  if (email.length > 254) return false; // Longueur max RFC 5321
+  if (email.includes('..')) return false; // Pas de points consécutifs
+  if (email.startsWith('.') || email.endsWith('.')) return false;
+  
+  return emailRegex.test(email.trim().toLowerCase());
 }
 
 // ENDPOINT SÉCURISÉ : Création de session de paiement (SANS DUPLICATION)

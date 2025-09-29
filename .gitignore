@@ -3,3 +3,4 @@ node_modules/
 server-backup.js
 public/programmes/*.pdf
 *.log
+test-email-validation.js
