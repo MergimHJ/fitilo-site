@@ -59,10 +59,21 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false  // Évite les conflits Stripe
 }));
 
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [process.env.DOMAIN_URL]
+  : ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000'];
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.DOMAIN_URL] 
-    : ['http://localhost:3000'],
+  origin: function(origin, callback) {
+    // Autoriser les requêtes sans origin (ex: Postman, curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS non autorisé pour cette origine'));
+    }
+  },
   credentials: true
 }));
 
@@ -83,9 +94,14 @@ const generalLimiter = rateLimit({
 });
 
 // Appliquer les limiteurs
+// Appliquer les limiteurs SAUF pour webhook (Stripe a son propre mécanisme)
 app.use('/create-checkout-session', paymentLimiter);
-app.use(generalLimiter);
-
+app.use((req, res, next) => {
+  if (req.path === '/webhook') {
+    return next(); // Pas de rate limit pour webhook
+  }
+  generalLimiter(req, res, next);
+});
 // Configuration email SÉCURISÉE (CORRECTION : createTransport au lieu de createTransporter)
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -175,7 +191,7 @@ app.post('/create-checkout-session', validateCheckoutData, async (req, res) => {
     };
     
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ['card', 'paypal'],
       mode: 'payment',
       line_items: [{
         price_data: {
@@ -246,7 +262,6 @@ app.post('/webhook', async (req, res) => {
 // FONCTION SÉCURISÉE : Gestion des paiements réussis
 async function handleSuccessfulPayment(session) {
   try {
-    // Récupération sécurisée des informations de session
     const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
       expand: ['line_items']
     });
@@ -254,14 +269,23 @@ async function handleSuccessfulPayment(session) {
     const customerEmail = fullSession.customer_details?.email;
     const programName = fullSession.metadata?.program_name;
     
+    // Validation des données
     if (!customerEmail || !programName) {
       throw new Error('Données de session incomplètes');
     }
     
+    if (!isValidEmail(customerEmail)) {
+      throw new Error(`Email invalide dans la session: ${customerEmail}`);
+    }
+    
     console.log(`✅ Paiement confirmé: ${customerEmail} - ${programName}`);
     
-    // Envoi sécurisé du programme
-    await sendProgram(customerEmail, programName, session.id);
+    const emailResult = await sendProgram(customerEmail, programName, session.id);
+    
+    if (!emailResult) {
+      console.log(`⚠️ ALERTE: Paiement ${session.id} confirmé mais email non envoyé à ${customerEmail}`);
+      // TODO: Logger dans un fichier/DB pour traitement manuel
+    }
     
   } catch (error) {
     console.error('❌ Erreur traitement paiement:', error);
@@ -305,15 +329,18 @@ async function sendProgram(customerEmail, programName, sessionId) {
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ Programme envoyé: ${customerEmail} - ID: ${info.messageId}`);
-    
-    // TODO: Logger dans une base de données pour suivi
-    
-  } catch (error) {
-    console.error(`❌ Erreur envoi email: ${customerEmail}`, error);
-    throw error;
-  }
+  const info = await transporter.sendMail(mailOptions);
+  console.log(`✅ Programme envoyé: ${customerEmail} - ID: ${info.messageId}`);
+  return info;
+  
+} catch (error) {
+  console.error(`❌ Erreur envoi email: ${customerEmail}`, error);
+  
+  // Ne pas throw : le webhook ne doit pas échouer si l'email échoue
+  // TODO: Implémenter retry automatique ou file d'attente
+  console.log('⚠️ Le paiement est validé mais l\'email a échoué. Envoi manuel nécessaire.');
+  return null;
+}
 }
 
 // TEMPLATE EMAIL SÉCURISÉ
@@ -367,6 +394,22 @@ process.on('uncaughtException', (error) => {
 process.on('unhandledRejection', (reason, promise) => {
   console.error('❌ Promesse rejetée non gérée:', reason);
   process.exit(1);
+});
+
+// ENDPOINT : Vérifier le statut d'une session après paiement
+app.get('/check-session/:sessionId', async (req, res) => {
+  try {
+    const session = await stripe.checkout.sessions.retrieve(req.params.sessionId);
+    
+    res.json({
+      status: session.payment_status,
+      customerEmail: session.customer_details?.email,
+      programName: session.metadata?.program_name
+    });
+  } catch (error) {
+    console.error('Erreur vérification session:', error);
+    res.status(404).json({ error: 'Session introuvable' });
+  }
 });
 
 // DÉMARRAGE SÉCURISÉ
