@@ -457,6 +457,18 @@
         );
       }
 
+      /* Animation d'apparition des sections */
+      .fade-in-section {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+      }
+
+      .fade-in-section.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
       .program-image.beginner {
         background-image: url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format");
       }
@@ -1373,6 +1385,64 @@
       </div>
     </section>
 
+    <!-- Bouton retour en haut -->
+    <button
+      id="back-to-top"
+      style="
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+        z-index: 1000;
+        transition: all 0.3s ease;
+      "
+      aria-label="Retour en haut"
+    >
+      ↑
+    </button>
+
+    <script>
+      // Afficher/masquer bouton retour en haut
+      (function () {
+        const backToTop = document.getElementById("back-to-top");
+
+        window.addEventListener("scroll", function () {
+          if (window.pageYOffset > 1500) {
+            backToTop.style.display = "block";
+          } else {
+            backToTop.style.display = "none";
+          }
+        });
+
+        backToTop.addEventListener("click", function () {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        });
+
+        // Effet hover
+        backToTop.addEventListener("mouseenter", function () {
+          this.style.transform = "scale(1.1)";
+          this.style.background = "#ff5252";
+        });
+
+        backToTop.addEventListener("mouseleave", function () {
+          this.style.transform = "scale(1)";
+          this.style.background = "#ff6b6b";
+        });
+      })();
+    </script>
+
     <footer class="legal-footer" role="contentinfo">
       <div class="container">
         <div class="footer-content">
@@ -2094,6 +2164,29 @@
           document.body.style.overflow = "auto";
         }
       });
+
+      // Animation apparition sections au scroll
+      (function () {
+        const sections = document.querySelectorAll(
+          ".programs, .about, .testimonials, .contact"
+        );
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("fade-in-section", "visible");
+              }
+            });
+          },
+          { threshold: 0.1 }
+        );
+
+        sections.forEach((section) => {
+          section.classList.add("fade-in-section");
+          observer.observe(section);
+        });
+      })();
 
       // Smooth scrolling for anchor links
       document.querySelectorAll('a[href^="#"]').forEach((anchor) => {

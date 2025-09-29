@@ -412,6 +412,11 @@ app.get('/check-session/:sessionId', async (req, res) => {
   }
 });
 
+// 404 handler - DOIT être en dernier avant app.listen
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
+
 // DÉMARRAGE SÉCURISÉ
 app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur le port ${PORT}`);
