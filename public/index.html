@@ -304,6 +304,8 @@
       .mobile-nav ul {
         list-style: none;
         text-align: center;
+        display: flex;
+        flex-direction: column;
       }
 
       .mobile-nav li {
@@ -329,6 +331,7 @@
         padding: 15px 30px;
         margin-top: 30px;
         display: inline-block;
+        color: #0a0a0a;
       }
 
       /* ====================================
@@ -2008,7 +2011,7 @@
       const mobileNav = document.getElementById("mobileNav");
       let isMenuOpen = false;
       // Initialiser aria-hidden au chargement de la page
-      mobileNav.setAttribute("aria-hidden", "true");
+      // mobileNav.setAttribute("aria-hidden", "true");
 
       if (burgerMenu && mobileNav) {
         burgerMenu.addEventListener("click", function () {
@@ -2018,13 +2021,13 @@
             burgerMenu.classList.add("active");
             burgerMenu.setAttribute("aria-expanded", "true");
             mobileNav.classList.add("active");
-            mobileNav.setAttribute("aria-hidden", "false");
+            // mobileNav.setAttribute("aria-hidden", "false");
             document.body.style.overflow = "hidden";
           } else {
             burgerMenu.classList.remove("active");
             burgerMenu.setAttribute("aria-expanded", "false");
             mobileNav.classList.remove("active");
-            mobileNav.setAttribute("aria-hidden", "true");
+            // mobileNav.setAttribute("aria-hidden", "true");
             document.body.style.overflow = "auto";
           }
         });
@@ -2035,7 +2038,7 @@
           burgerMenu.classList.remove("active");
           burgerMenu.setAttribute("aria-expanded", "false");
           mobileNav.classList.remove("active");
-          mobileNav.setAttribute("aria-hidden", "true");
+          // mobileNav.setAttribute("aria-hidden", "true");
           document.body.style.overflow = "auto";
         };
 
