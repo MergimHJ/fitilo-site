@@ -1060,17 +1060,17 @@
     </style>
   </head>
   <body>
-    <header>
+    <header role="banner">
       <div class="container">
         <div class="header-content">
-          <a href="index.html" class="logo">
-            <img src="assets/logo/FIT-ILOv1.png" alt="FIT-ILO" />
+          <a href="index.html" class="logo" aria-label="Retour à l'accueil FIT-ILO">
+            <img src="assets/logo/FIT-ILOv1.png" alt="Logo FIT-ILO - Coach fitness Ilona Korkis" />
           </a>
 
           <!-- Navigation desktop -->
           <div class="nav-wrapper">
-            <nav>
-              <ul>
+            <nav role="navigation" aria-label="Navigation principale">
+              <ul role="menubar">
                 <li><a href="#programs">Programmes</a></li>
                 <li><a href="#about">À propos</a></li>
                 <li><a href="#testimonials">Témoignages</a></li>
@@ -1080,18 +1080,30 @@
           </div>
 
           <!-- Menu burger -->
-          <div class="burger-menu" id="burgerMenu">
-            <div class="burger-line"></div>
-            <div class="burger-line"></div>
-            <div class="burger-line"></div>
-          </div>
+          <div class="burger-menu" 
+  id="burgerMenu"
+  role="button"
+  tabindex="0"
+  aria-label="Ouvrir le menu de navigation"
+  aria-expanded="false"
+  aria-controls="mobileNav"
+>
+  <div class="burger-line"></div>
+  <div class="burger-line"></div>
+  <div class="burger-line"></div>
+</div>
         </div>
       </div>
     </header>
 
     <!-- Navigation mobile -->
-    <div class="mobile-nav" id="mobileNav">
-      <ul>
+    <nav 
+      class="mobile-nav" 
+      id="mobileNav"
+      role="navigation"
+      aria-label="Menu mobile"
+    >
+      <ul role="menu">
         <li><a href="#programs" onclick="closeMobileNav()">Programmes</a></li>
         <li><a href="#about" onclick="closeMobileNav()">À propos</a></li>
         <li>
@@ -1103,11 +1115,11 @@
           >
         </li>
       </ul>
-    </div>
+    </nav>
 
-    <section class="hero">
+    <section class="hero" role="banner" aria-labelledby="hero-title">
       <div class="container">
-        <h1>
+        <h1 id="hero-title">
           Transform Your Body, <span class="highlight">Elevate Your Mind</span>
         </h1>
         <p>Coaching fitness & nutrition sur mesure à Bruxelles avec Ilona</p>
@@ -1117,9 +1129,9 @@
       </div>
     </section>
 
-    <section class="programs" id="programs">
+    <section class="programs" id="programs" aria-labelledby="programs-title">
       <div class="container">
-        <h2 class="section-title">Choisissez votre transformation</h2>
+        <h2 class="section-title" id="programs-title">Choisissez votre transformation</h2>
 
         <div class="programs-grid">
           <div class="program-card">
@@ -1141,6 +1153,7 @@
                 data-price="29"
                 data-program="Programme Débutant"
                 onclick="buyProgram(this)"
+                aria-label="Acheter le Programme Débutant pour 29 euros"
               >
                 Acheter maintenant
               </button>
@@ -1166,6 +1179,7 @@
                 data-price="39"
                 data-program="Programme Fessiers"
                 onclick="buyProgram(this)"
+                aria-label="Acheter le Programme Fessiers pour 39 euros"
               >
                 Acheter maintenant
               </button>
@@ -1191,6 +1205,7 @@
                 data-price="59"
                 data-program="Programme Complet"
                 onclick="buyProgram(this)"
+                aria-label="Acheter le Programme Complet pour 59 euros"
               >
                 Acheter maintenant
               </button>
@@ -1200,11 +1215,11 @@
       </div>
     </section>
 
-    <section class="about" id="about">
+    <section class="about" id="about" aria-labelledby="about-title">
       <div class="container">
         <div class="about-content">
           <div class="about-text">
-            <h2>Salut, je suis <span class="highlight">Ilona</span></h2>
+            <h2 id="about-title">Salut, je suis <span class="highlight">Ilona</span></h2>
             <p>
               Coach fitness depuis plus de 3 ans, j'ai accompagné plus de 30
               femmes dans leur transformation.
@@ -1233,9 +1248,9 @@
       </div>
     </section>
 
-    <section class="testimonials" id="testimonials">
+    <section class="testimonials" id="testimonials" aria-labelledby="testimonials-title">
       <div class="container">
-        <h2 class="section-title">Témoignages</h2>
+        <h2 class="section-title" id="testimonials-title">Témoignages</h2>
         <div class="testimonial-grid">
           <div class="testimonial-card">
             <p class="testimonial-text">
@@ -1262,9 +1277,9 @@
       </div>
     </section>
 
-    <section class="contact" id="contact">
+    <section class="contact" id="contact" aria-labelledby="contact-title">
       <div class="container">
-        <h2 class="section-title">Prête à commencer ?</h2>
+        <h2 class="section-title" id="contact-title">Prête à commencer ?</h2>
         <p class="contact-subtitle">
           Choisis ton moyen préféré pour me contacter et démarrer ta
           transformation
@@ -1276,19 +1291,14 @@
             <h3>Email</h3>
             <p>contact.fitilo@gmail.com</p>
           </a>
-
-          <a
-            href="https://www.instagram.com/ilo.krs"
+          <a href="https://www.instagram.com/ilo.krs"
             target="_blank"
             class="contact-card"
           >
             <div class="icon">📸</div>
             <h3>Instagram</h3>
             <p>@ilo.krs</p>
-          </a>
-
-          <a
-            href="https://www.tiktok.com/@ilona.krs"
+          <a href="https://www.tiktok.com/@ilona.krs"
             target="_blank"
             class="contact-card"
           >
@@ -1300,7 +1310,7 @@
       </div>
     </section>
 
-    <footer class="legal-footer">
+    <footer class="legal-footer" role="contentinfo">
       <div class="container">
         <div class="footer-content">
           <div class="footer-section">
@@ -1756,6 +1766,7 @@
     <!-- Stripe JS -->
     <script src="https://js.stripe.com/v3/"></script>
 
+
     <script>
       // Configuration Stripe sécurisée - RÉCUPÉRÉE DU SERVEUR
 let stripe;
@@ -1917,29 +1928,37 @@ if (window.top !== window.self) {
 const burgerMenu = document.getElementById("burgerMenu");
 const mobileNav = document.getElementById("mobileNav");
 let isMenuOpen = false;
+// Initialiser aria-hidden au chargement de la page
+mobileNav.setAttribute('aria-hidden', 'true');
 
 if (burgerMenu && mobileNav) {
   burgerMenu.addEventListener("click", function () {
-    isMenuOpen = !isMenuOpen;
+  isMenuOpen = !isMenuOpen;
 
-    if (isMenuOpen) {
-      burgerMenu.classList.add("active");
-      mobileNav.classList.add("active");
-      document.body.style.overflow = "hidden";
-    } else {
-      burgerMenu.classList.remove("active");
-      mobileNav.classList.remove("active");
-      document.body.style.overflow = "auto";
-    }
-  });
+  if (isMenuOpen) {
+    burgerMenu.classList.add("active");
+    burgerMenu.setAttribute('aria-expanded', 'true');
+    mobileNav.classList.add("active");
+    mobileNav.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = "hidden";
+  } else {
+    burgerMenu.classList.remove("active");
+    burgerMenu.setAttribute('aria-expanded', 'false');
+    mobileNav.classList.remove("active");
+    mobileNav.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = "auto";
+  }
+});
 
   // Function to close mobile navigation
   window.closeMobileNav = function() {
-    isMenuOpen = false;
-    burgerMenu.classList.remove("active");
-    mobileNav.classList.remove("active");
-    document.body.style.overflow = "auto";
-  };
+  isMenuOpen = false;
+  burgerMenu.classList.remove("active");
+  burgerMenu.setAttribute('aria-expanded', 'false');
+  mobileNav.classList.remove("active");
+  mobileNav.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = "auto";
+};
 
   // Close mobile nav when clicking outside
   mobileNav.addEventListener("click", function (e) {
