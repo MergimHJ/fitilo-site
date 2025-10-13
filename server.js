@@ -10,6 +10,8 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.set('trust proxy', 1);
+
 // SÉCURITÉ : Middleware de protection (UNE SEULE FOIS)
 app.use(helmet({
   contentSecurityPolicy: {
@@ -193,7 +195,7 @@ app.post('/create-checkout-session', validateCheckoutData, async (req, res) => {
     };
     
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'paypal'],
+      payment_method_types: ['card'],
       mode: 'payment',
       line_items: [{
         price_data: {
