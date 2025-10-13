@@ -104,14 +104,15 @@ app.use((req, res, next) => {
 });
 // Configuration email SÉCURISÉE (CORRECTION : createTransport au lieu de createTransporter)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // true pour 465, false pour 587
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_PASSWORD
   },
-  secure: true,
   tls: {
-    rejectUnauthorized: true
+    rejectUnauthorized: false // Plus permissif pour Render
   }
 });
 
@@ -119,7 +120,8 @@ const transporter = nodemailer.createTransport({
 transporter.verify((error, success) => {
   if (error) {
     console.error('❌ Configuration email invalide:', error);
-    process.exit(1);
+    console.log('⚠️  Le serveur continue, mais les emails ne seront pas envoyés');
+    // Le serveur continue de fonctionner même si l'email échoue
   } else {
     console.log('✅ Configuration email validée');
   }

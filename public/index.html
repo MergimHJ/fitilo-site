@@ -470,15 +470,15 @@
       }
 
       .program-image.beginner {
-        background-image: url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format");
+        background-image: url("assets/ilona/img-1.png");
       }
 
       .program-image.glutes {
-        background-image: url("https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&h=300&fit=crop&auto=format");
+        background-image: url("assets/ilona/img-4.png");
       }
 
       .program-image.complete {
-        background-image: url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop&auto=format");
+        background-image: url("assets/ilona/img-8.png");
       }
 
       .program-content {
@@ -577,15 +577,21 @@
       }
 
       .about-image {
-        background: linear-gradient(135deg, #ff6b6b, #ffa500);
-        height: 400px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 48px;
-      }
+  background: linear-gradient(135deg, #ff6b6b, #ffa500);
+  height: 400px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Pour que l'image respecte le border-radius */
+}
+
+.about-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* L'image couvrira tout l'espace sans déformation */
+  border-radius: 8px;
+}
 
       .about-text p {
         color: #888;
@@ -1308,9 +1314,10 @@
                 <div class="stat-label">Années d'expérience</div>
               </div>
             </div>
-          </div>
-          <div class="about-image">💪</div>
-        </div>
+            </div>
+          <div class="about-image">
+  <img src="assets/ilona/img-5.png" alt="Ilona - Coach fitness">
+</div>
       </div>
     </section>
 
