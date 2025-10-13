@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const path = require('path');
 
 const app = express();
@@ -104,30 +104,14 @@ app.use((req, res, next) => {
   }
   generalLimiter(req, res, next);
 });
-// Configuration email SÉCURISÉE (CORRECTION : createTransport au lieu de createTransporter)
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // true pour 465, false pour 587
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_PASSWORD
-  },
-  tls: {
-    rejectUnauthorized: false // Plus permissif pour Render
-  }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// VALIDATION : Vérification de la configuration email
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('❌ Configuration email invalide:', error);
-    console.log('⚠️  Le serveur continue, mais les emails ne seront pas envoyés');
-    // Le serveur continue de fonctionner même si l'email échoue
-  } else {
-    console.log('✅ Configuration email validée');
-  }
-});
+// Vérification de la clé API
+if (process.env.RESEND_API_KEY) {
+  console.log('✅ Resend configuré');
+} else {
+  console.error('❌ RESEND_API_KEY manquante');
+}
 
 // Middleware pour les webhooks (AVANT express.json())
 app.use('/webhook', express.raw({type: 'application/json'}));
@@ -313,38 +297,47 @@ async function sendProgram(customerEmail, programName, sessionId) {
   const filePath = path.join(__dirname, 'public', 'programmes', fileName);
   
   // SÉCURITÉ : Vérification de l'existence du fichier
-  const fs = require('fs').promises;
+  const fs = require('fs');
+  const fsPromises = require('fs').promises;
+  
   try {
-    await fs.access(filePath);
+    await fsPromises.access(filePath);
   } catch (error) {
     throw new Error(`Fichier programme introuvable: ${fileName}`);
   }
 
-  const mailOptions = {
-    from: `"FIT-ILO - Ilona" <${process.env.GMAIL_USER}>`,
-    to: customerEmail,
-    subject: `🎉 Votre ${programName} est prêt ! - FIT-ILO`,
-    html: generateEmailTemplate(programName, customerEmail),
-    attachments: [{
-      filename: fileName,
-      path: filePath,
-      contentType: 'application/pdf'
-    }]
-  };
+  // Lecture du PDF en base64 pour Resend
+  const pdfBuffer = fs.readFileSync(filePath);
+  const pdfBase64 = pdfBuffer.toString('base64');
 
   try {
-  const info = await transporter.sendMail(mailOptions);
-  console.log(`✅ Programme envoyé: ${customerEmail} - ID: ${info.messageId}`);
-  return info;
-  
-} catch (error) {
-  console.error(`❌ Erreur envoi email: ${customerEmail}`, error);
-  
-  // Ne pas throw : le webhook ne doit pas échouer si l'email échoue
-  // TODO: Implémenter retry automatique ou file d'attente
-  console.log('⚠️ Le paiement est validé mais l\'email a échoué. Envoi manuel nécessaire.');
-  return null;
-}
+    const { data, error } = await resend.emails.send({
+      from: 'FIT-ILO - Ilona <onboarding@resend.dev>',
+      to: [customerEmail],
+      subject: `🎉 Votre ${programName} est prêt ! - FIT-ILO`,
+      html: generateEmailTemplate(programName, customerEmail),
+      attachments: [
+        {
+          filename: fileName,
+          content: pdfBase64,
+        },
+      ],
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    console.log(`✅ Programme envoyé: ${customerEmail} - ID: ${data.id}`);
+    return data;
+    
+  } catch (error) {
+    console.error(`❌ Erreur envoi email: ${customerEmail}`, error);
+    
+    // Ne pas throw : le webhook ne doit pas échouer si l'email échoue
+    console.log('⚠️ Le paiement est validé mais l\'email a échoué. Envoi manuel nécessaire.');
+    return null;
+  }
 }
 
 // TEMPLATE EMAIL SÉCURISÉ
