@@ -107,8 +107,8 @@ app.use((req, res, next) => {
 // Configuration email SÉCURISÉE (CORRECTION : createTransport au lieu de createTransporter)
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // true pour 465, false pour 587
+  port: 465,
+  secure: true, // true pour 465, false pour 587
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_PASSWORD
