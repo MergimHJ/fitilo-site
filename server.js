@@ -306,26 +306,9 @@ async function sendProgram(customerEmail, programName, sessionId) {
   }
 
   // Générer l'URL Cloudinary sécurisée
-  const pdfUrl = cloudinary.url(publicId, {
-    resource_type: 'raw',
-    secure: true,
-    format: 'pdf'
-  });
+  const pdfUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/raw/upload/${publicId}.pdf`;
 
   try {
-    // Télécharger le PDF depuis Cloudinary
-    const https = require('https');
-    const pdfBuffer = await new Promise((resolve, reject) => {
-      https.get(pdfUrl, (response) => {
-        const chunks = [];
-        response.on('data', (chunk) => chunks.push(chunk));
-        response.on('end', () => resolve(Buffer.concat(chunks)));
-        response.on('error', reject);
-      });
-    });
-
-    const pdfBase64 = pdfBuffer.toString('base64');
-
     const { data, error } = await resend.emails.send({
       from: 'FIT-ILO - Ilona <send@ilonakrs.com>',
       to: [customerEmail],
@@ -334,7 +317,7 @@ async function sendProgram(customerEmail, programName, sessionId) {
       attachments: [
         {
           filename: `${programName}.pdf`,
-          content: pdfBase64
+          path: pdfUrl
         },
       ],
     });
