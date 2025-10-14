@@ -7,6 +7,17 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { Resend } = require('resend');
 const path = require('path');
 
+const cloudinary = require('cloudinary').v2;
+
+// Configuration Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+console.log('☁️ Cloudinary configuré:', process.env.CLOUDINARY_CLOUD_NAME ? '✅' : '❌');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -281,45 +292,36 @@ async function handleSuccessfulPayment(session) {
   }
 }
 
-// FONCTION SÉCURISÉE : Envoi de programme
+// FONCTION SÉCURISÉE : Envoi de programme avec Cloudinary
 async function sendProgram(customerEmail, programName, sessionId) {
   const programFiles = {
-    'Programme Débutant': 'Programme_Debutant.pdf',
-    'Programme Fessiers': 'Programme_Fessiers.pdf',
-    'Programme Complet': 'Programme_Complet.pdf'
+    'Programme Débutant': 'Programme_Debutant_pismcc',
+    'Programme Fessiers': 'Programme_Fessiers_lriywk',
+    'Programme Complet': 'Programme_Complet_sw08yk'
   };
 
-  const fileName = programFiles[programName];
-  if (!fileName) {
+  const publicId = programFiles[programName];
+  if (!publicId) {
     throw new Error(`Programme non trouvé: ${programName}`);
   }
 
-  const filePath = path.join(__dirname, 'public', 'programmes', fileName);
-  
-  // SÉCURITÉ : Vérification de l'existence du fichier
-  const fs = require('fs');
-  const fsPromises = require('fs').promises;
-  
-  try {
-    await fsPromises.access(filePath);
-  } catch (error) {
-    throw new Error(`Fichier programme introuvable: ${fileName}`);
-  }
-
-  // Lecture du PDF en base64 pour Resend
-  const pdfBuffer = fs.readFileSync(filePath);
-  const pdfBase64 = pdfBuffer.toString('base64');
+  // Générer l'URL Cloudinary sécurisée
+  const pdfUrl = cloudinary.url(publicId, {
+    resource_type: 'raw',
+    secure: true,
+    format: 'pdf'
+  });
 
   try {
     const { data, error } = await resend.emails.send({
       from: 'FIT-ILO - Ilona <send@ilonakrs.com>',
       to: [customerEmail],
       subject: `🎉 Votre ${programName} est prêt ! - FIT-ILO`,
-      html: generateEmailTemplate(programName, customerEmail),
+      html: generateEmailTemplate(programName, customerEmail, pdfUrl),
       attachments: [
         {
-          filename: fileName,
-          content: pdfBase64,
+          filename: `${programName}.pdf`,
+          path: pdfUrl
         },
       ],
     });
@@ -333,15 +335,13 @@ async function sendProgram(customerEmail, programName, sessionId) {
     
   } catch (error) {
     console.error(`❌ Erreur envoi email: ${customerEmail}`, error);
-    
-    // Ne pas throw : le webhook ne doit pas échouer si l'email échoue
     console.log('⚠️ Le paiement est validé mais l\'email a échoué. Envoi manuel nécessaire.');
     return null;
   }
 }
 
 // TEMPLATE EMAIL SÉCURISÉ
-function generateEmailTemplate(programName, customerEmail) {
+function generateEmailTemplate(programName, customerEmail, pdfUrl) {
   return `
     <!DOCTYPE html>
     <html>
@@ -358,7 +358,7 @@ function generateEmailTemplate(programName, customerEmail) {
         <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #ff6b6b;">📋 Prochaines étapes :</h3>
           <ol style="color: #ccc;">
-            <li>Télécharge ton programme en pièce jointe</li>
+            <li>Télécharge ton programme en pièce jointe ou <a href="${pdfUrl}" style="color: #ff6b6b;">clique ici</a></li>
             <li>Lis attentivement les instructions</li>
             <li>Commence dès aujourd'hui !</li>
             <li>Suis-moi sur Instagram @ilo.krs pour motivation quotidienne</li>
