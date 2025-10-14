@@ -1220,7 +1220,7 @@
               <div class="program-price">29<span class="currency">€</span></div>
               <button
                 class="buy-btn"
-                data-price="29"
+                data-price="1"
                 data-program="Programme Débutant"
                 onclick="buyProgram(this)"
                 aria-label="Acheter le Programme Débutant pour 29 euros"
@@ -1961,7 +1961,7 @@
           return;
         }
 
-        const validPrices = [29, 39, 59];
+        const validPrices = [1, 39, 59];
         if (!validPrices.includes(price)) {
           showError("Prix invalide");
           return;
