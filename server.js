@@ -306,7 +306,7 @@ async function sendProgram(customerEmail, programName, sessionId) {
   }
 
   // Générer l'URL Cloudinary sécurisée
-  const pdfUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/raw/upload/${publicId}.pdf`;
+const pdfUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/v1760431607/${publicId}.pdf`;
 
   try {
     // Télécharger le PDF depuis Cloudinary
