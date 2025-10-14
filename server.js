@@ -131,7 +131,7 @@ function validateCheckoutData(req, res, next) {
   const { price, programName, email } = req.body;
   
   // Validation du prix
-  const validPrices = [1, 39, 59];
+  const validPrices = [29, 39, 59];
   if (!validPrices.includes(parseInt(price))) {
     console.log('❌ Prix invalide:', price);
     return res.status(400).json({ error: 'Prix invalide' });
