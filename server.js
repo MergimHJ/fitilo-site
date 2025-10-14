@@ -309,6 +309,18 @@ async function sendProgram(customerEmail, programName, sessionId) {
   const pdfUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/raw/upload/${publicId}.pdf`;
 
   try {
+    // Télécharger le PDF depuis Cloudinary
+    const fetch = require('node-fetch');
+    const response = await fetch(pdfUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Erreur téléchargement PDF: ${response.statusText}`);
+    }
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const pdfBuffer = Buffer.from(arrayBuffer);
+    const pdfBase64 = pdfBuffer.toString('base64');
+
     const { data, error } = await resend.emails.send({
       from: 'FIT-ILO - Ilona <send@ilonakrs.com>',
       to: [customerEmail],
@@ -317,7 +329,7 @@ async function sendProgram(customerEmail, programName, sessionId) {
       attachments: [
         {
           filename: `${programName}.pdf`,
-          path: pdfUrl
+          content: pdfBase64
         },
       ],
     });
