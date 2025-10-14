@@ -312,7 +312,7 @@ async function sendProgram(customerEmail, programName, sessionId) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'FIT-ILO - Ilona <onboarding@resend.dev>',
+      from: 'FIT-ILO - Ilona <send@ilonakrs.com>',
       to: [customerEmail],
       subject: `🎉 Votre ${programName} est prêt ! - FIT-ILO`,
       html: generateEmailTemplate(programName, customerEmail),
